@@ -25,27 +25,17 @@ print('https://irsa.ipac.caltech.edu/ibe/data/wise/allwise/p3am_cdd/' + path)
 #/ibe/data/wise/allsky/4band_p1bm_frm/6a/02206a/149/02206a149-w1-unc-1b.fits.gz?center=300,300pix&size=2arcmin&gzip=false
 # /ibe/data/wise/allwise/p3am_cdd/03/0390/0390p605_ac51/0390p605_ac51-w1-int-3.fits?center=39.000655,60.577778&size=200pix
 
-# response = urll.urlopen('https://irsa.ipac.caltech.edu/ibe/data/wise/allsky/4band_p1bm_frm/6a/02206a/149/02206a149-w1-int-1b.fits?center=70,20&size=200pix')
-# html = response.read()
-# tps://irsa.ipac.caltech.edu/ibe/data/wise/allsky/4band_p1bm_frm/6a/02206a/')
-#with open('images/test.fits', 'wb') as f:
-#    f.write(html)
+response = urll.urlopen('https://irsa.ipac.caltech.edu/ibe/data/wise/allsky/4band_p1bm_frm/6a/02206a/149/02206a149-w1-int-1b.fits?center=70,20&size=200pix')
+html = response.read()
+#tps://irsa.ipac.caltech.edu/ibe/data/wise/allsky/4band_p1bm_frm/6a/02206a/')
+with open('images/test.fits', 'wb') as f:
+    f.write(html)
 
-fits_file = "images/0293p696_ac51-w1-int-3.fits"
+fits_file = 'images/test.fits'
 hdul = fits.open(fits_file)
 data = hdul[0].data
 plt.imshow(np.log10(data))
 plt.show()
-# import os
-# for path, dirs, files in os.walk('https://irsa.ipac.caltech.edu/ibe/data/wise/allsky/4band_p1bm_frm/6a/02206a/'):
-#     print(path)
-#     print('1')
-#     for f in files:
-#         print(f)
-#
-
-
-
 
 def findfiles(html):
     record = False
@@ -88,11 +78,7 @@ for i in dir[0]:
 
 print('fits files: ', fits)
 print('tbl files: ', tbl)
-#print('dir: ', dir)
 
-import csv
-
-#csvData = [['Person', 'Age'], ['Peter', '22'], ['Jasmine', '21'], ['Sam', '24']]
 with open('fits_files.csv', 'w') as csvFile:
     for name in fits:
         csvFile.write(name)
@@ -105,8 +91,3 @@ with open('tbl_files.csv', 'w') as csvFile:
         csvFile.write('\n')
 csvFile.close()
 
-
-#
-# from astropy.io import fits
-# fx = fits.open('images/0293p696_ac51-w1-int-3.fits', memmap=True)
-# d = fx[1].data
