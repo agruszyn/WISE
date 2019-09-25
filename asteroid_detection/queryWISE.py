@@ -1,11 +1,17 @@
 import urllib.request as urll
 from astropy.io import fits
+import astropy.table
 import numpy as np
 import matplotlib.pyplot as plt
 import requests
 import time
-
-# CALTECH code to build URL
+import atpy
+#t = atpy(table)
+# # CALTECH code to build URL
+# Examining the 'description' and 'catname' columns of this file,
+# we find that the AllWISE Source Catalog has a cat name of "allwise_p3as_psd".
+# https://irsa.ipac.caltech.edu/applications/Gator/GatorAid/irsa/catsearch.html
+# can search by radial ascention
 params = {'coadd_id': '0293p696_ac51',
           'band': 1,
           }
@@ -36,6 +42,11 @@ hdul = fits.open(fits_file)
 data = hdul[0].data
 plt.imshow(np.log10(data))
 plt.show()
+
+catalog = requests.get("https://irsa.ipac.caltech.edu/cgi-bin/Gator/nph-scan?mode=ascii")
+with open('catalog.tbl', 'wb') as file:
+    file.write(catalog.content)
+
 
 def findfiles(html):
     record = False
