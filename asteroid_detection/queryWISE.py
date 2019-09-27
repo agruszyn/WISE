@@ -37,7 +37,7 @@ html = response.read()
 with open('images/test.fits', 'wb') as f:
     f.write(html)
 
-fits_file = 'images/test.fits'
+fits_file = 'images/R0D0image.fits'
 hdul = fits.open(fits_file)
 data = hdul[0].data
 plt.imshow(np.log10(data))
