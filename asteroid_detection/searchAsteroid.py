@@ -97,7 +97,6 @@ for a in range(len(data)):
 
 fx = dip.fftshift(dip.fft2(data))
 radius = 30
-
 center = len(fx)/2
 
 f = np.log(np.abs(fx))
