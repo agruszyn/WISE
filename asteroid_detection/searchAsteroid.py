@@ -8,6 +8,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import requests
 import atpy
+from astropy import wcs
 #import pyvo
 
 OBJECT = 'ceres'
@@ -27,6 +28,7 @@ t = Time(tab.mjd[2], format='mjd')
 t.format = 'fits'
 
 search = 'https://irsa.ipac.caltech.edu/ibe/search/wise/neowiser/p1bm_frm?POS=' + str(tab.ra[2]) + ',' + str(tab.dec[2])
+print(tab.ra[2], ' and ', tab.dec[2])
 
 if not os.path.isfile('fitsData.tbl'):
     html2 = requests.get(search)
@@ -71,7 +73,29 @@ fits_file = image
 hdul = fits.open(fits_file)
 data = hdul[0].data
 header = hdul[0].header
-print(header)
+hdul.close()
 plt.imshow(np.log10(data))
 plt.show()
 
+w = wcs.WCS(image)
+lon, lat = w.wcs_pix2world(508, 508, 0)
+print('lon: ', lon, 'lat: ', lat)
+# CERES
+#342 x
+#925 y
+# CRPIX1  =                508.5 / Reference X pixel
+# CRPIX2  =                508.5 / Reference Y pixel
+# CRVAL1  =    0.433682830922963 / [deg] Image center RA
+# CRVAL2  =     14.0325824797345 / [deg] Image center Dec
+# CTYPE1  = 'RA---SIN-SIP'       / Sin projection with SIP coefficients
+# CTYPE2  = 'DEC--SIN-SIP'       / Sin projection with SIP coefficients
+# CD1_1   = 0.000698823672152697 / WCS rotation matrix element
+# CD1_2   = 0.000312769537857026 / WCS rotation matrix element
+# CD2_1   = 0.000314830254725055 / WCS rotation matrix element
+# CD2_2   = -0.000694249531937869 / WCS rotation matrix element
+# WCROTA2 =     204.252259008431 / [deg] CCW rotation of RA at CRPIX1,2
+# PA      =     155.747740991569 / [deg] Rotation of +Y EofN at CRPIX1,2
+# WCDELT1 = -0.000766467621006409 / [deg/pix] X-axis scale
+# WCDELT2 = 0.000761450718305031 / [deg/pix] Y-axis scale
+# PXSCAL1 =    -2.75928343562307 / [arcsec/pixel] X-axis scale
+# PXSCAL2 =     2.74122258589811 / [arcsec/pixel] Y-axis scale
