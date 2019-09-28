@@ -12,17 +12,25 @@ import atpy
 from astropy import wcs
 #import pyvo
 
-#OBJECT = 'ceres'
-OBJECT = 'gletorrence'
-URL = 'https://irsa.ipac.caltech.edu/'
-catnames = ['neowiser_p1bs_psd', 'neowiser_p1ba_mch', 'neowiser_p1bs_frm', 'neowiser_p1bl_lod']
-
-if not os.path.isfile('neo0.tbl'):
-    html = requests.get(URL + 'cgi-bin/Gator/nph-query?outfmt=1&searchForm=MO&spatial=cone&catalog=' + catnames[0] + '&moradius=5&mobj=smo&mobjstr=324')
-    file = open('neo0.tbl', 'wb')
+def get_catalog(catname, asteroid):
+    html = requests.get(URL + 'cgi-bin/Gator/nph-query?outfmt=1&searchForm=MO&spatial=cone&catalog=' + catname + '&moradius=5&mobj=smo&mobjstr=' + asteroid)
+    file = open('irsaCatalog.tbl', 'wb')
     file.write(html.content)
     file.close()
 
+
+
+
+
+
+
+#OBJECT = 'Ceres'
+OBJECT = 'Gletorrence'
+URL = 'https://irsa.ipac.caltech.edu/'
+catnames = ['neowiser_p1bs_psd', 'neowiser_p1ba_mch', 'neowiser_p1bs_frm', 'neowiser_p1bl_lod']
+
+if not os.path.isfile(OBJECT + '_Catalog.tbl'):
+    get_catalog(catnames[0], OBJECT)
 
 
 tab = atpy.Table('neo0.tbl')
@@ -57,7 +65,7 @@ for i in range(len(fitsData.date_obs)):
         frame_num.append(fitsData.frame_num[i])
         band.append(fitsData.band[i])
 print('UTC: ', utc)
-print(fitsData.date_obs)
+#print(fitsData.date_obs)
 params = {'scan_id': scan_id[0],
           'frame_num': frame_num[0],
           'band': band[-1],
@@ -93,7 +101,7 @@ for a in range(len(data)):
     for b in range(len(data[a])):
         if np.isnan(data[a,b]):
             data[a, b] = 255
-            print(a, b)
+#            print(a, b)
 
 fx = dip.fftshift(dip.fft2(data))
 radius = 30
