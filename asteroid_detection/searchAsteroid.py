@@ -3,6 +3,7 @@ from astropy.io import fits
 # import astropy.table
 # import astropy.time
 from astropy.time import Time
+import dippykit as dip
 import os
 import numpy as np
 import matplotlib.pyplot as plt
@@ -12,7 +13,7 @@ from astropy import wcs
 #import pyvo
 
 #OBJECT = 'ceres'
-OBJECT = 'newtonia'
+OBJECT = 'gletorrence'
 URL = 'https://irsa.ipac.caltech.edu/'
 catnames = ['neowiser_p1bs_psd', 'neowiser_p1ba_mch', 'neowiser_p1bs_frm', 'neowiser_p1bl_lod']
 
@@ -21,6 +22,7 @@ if not os.path.isfile('neo0.tbl'):
     file = open('neo0.tbl', 'wb')
     file.write(html.content)
     file.close()
+
 
 
 tab = atpy.Table('neo0.tbl')
@@ -58,7 +60,7 @@ print('UTC: ', utc)
 print(fitsData.date_obs)
 params = {'scan_id': scan_id[0],
           'frame_num': frame_num[0],
-          'band': band[0],
+          'band': band[-1],
           }
 image = 'images/' + OBJECT + '_' + str.format('{scan_id:s}{frame_num:03d}-w{band:1d}', **params) + '-int-1b.fits'
 
@@ -83,9 +85,30 @@ hdul = fits.open(fits_file)
 data = hdul[0].data
 header = hdul[0].header
 hdul.close()
+print(type(data))
 plt.imshow(np.log10(data))
 plt.show()
 
+for a in range(len(data)):
+    for b in range(len(data[a])):
+        if np.isnan(data[a,b]):
+            data[a, b] = 255
+            print(a, b)
+
+fx = dip.fftshift(dip.fft2(data))
+radius = 30
+center = len(fx)/2
+
+f = np.log(np.abs(fx))
+for a in range(len(f)):
+    for b in range(len(f[a])):
+        if np.square(center - a) + np.square(center - b) < np.square(radius):
+            f[a, b] = 0
+plt.imshow(np.log10(data))
+plt.show()
+
+plt.imshow(np.log(np.abs(dip.ifft2(fx))))
+plt.show()
 
 # CERES
 #342 x
