@@ -11,7 +11,8 @@ import atpy
 from astropy import wcs
 #import pyvo
 
-OBJECT = 'ceres'
+#OBJECT = 'ceres'
+OBJECT = 'newtonia'
 URL = 'https://irsa.ipac.caltech.edu/'
 catnames = ['neowiser_p1bs_psd', 'neowiser_p1ba_mch', 'neowiser_p1bs_frm', 'neowiser_p1bl_lod']
 
@@ -23,18 +24,21 @@ if not os.path.isfile('neo0.tbl'):
 
 
 tab = atpy.Table('neo0.tbl')
+count = np.size(tab.mjd)
+index = np.random.randint(low=0, high=count)
+print('index: ', index)
 
-t = Time(tab.mjd[2], format='mjd')
+t = Time(tab.mjd[index], format='mjd')
 t.format = 'fits'
 
-search = 'https://irsa.ipac.caltech.edu/ibe/search/wise/neowiser/p1bm_frm?POS=' + str(tab.ra[2]) + ',' + str(tab.dec[2])
-print(tab.ra[2], ' and ', tab.dec[2])
+search = 'https://irsa.ipac.caltech.edu/ibe/search/wise/neowiser/p1bm_frm?POS=' + str(tab.ra[index]) + ',' + str(tab.dec[index])
+print(tab.ra[index], ' and ', tab.dec[index])
 
-if not os.path.isfile('fitsData.tbl'):
-    html2 = requests.get(search)
-    file = open('fitsData.tbl', 'wb')
-    file.write(html2.content)
-    file.close()
+#if not os.path.isfile('fitsData.tbl'):
+html2 = requests.get(search)
+file = open('fitsData.tbl', 'wb')
+file.write(html2.content)
+file.close()
 
 fitsData = atpy.Table('fitsData.tbl')
 utc = str(t).replace('T', ' ', 1)
@@ -50,7 +54,8 @@ for i in range(len(fitsData.date_obs)):
         scan_id.append(str(fitsData.scan_id[i]))
         frame_num.append(fitsData.frame_num[i])
         band.append(fitsData.band[i])
-
+print('UTC: ', utc)
+print(fitsData.date_obs)
 params = {'scan_id': scan_id[0],
           'frame_num': frame_num[0],
           'band': band[0],
@@ -69,6 +74,10 @@ if not os.path.isfile(image):
     file.write(r.content)
     file.close()
 
+w = wcs.WCS(image)
+x, y = w.wcs_world2pix(tab.ra[index], tab.dec[index], 0)
+print('lon: ', x, 'lat   : ', y)
+
 fits_file = image
 hdul = fits.open(fits_file)
 data = hdul[0].data
@@ -77,9 +86,7 @@ hdul.close()
 plt.imshow(np.log10(data))
 plt.show()
 
-w = wcs.WCS(image)
-lon, lat = w.wcs_pix2world(508, 508, 0)
-print('lon: ', lon, 'lat: ', lat)
+
 # CERES
 #342 x
 #925 y
