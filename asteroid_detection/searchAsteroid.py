@@ -70,8 +70,7 @@ def download_image(asteroid, params):
         return image
 
 
-def display_fits(fits):
-    fits_file = fits
+def display_fits(fits_file):
     hdul = fits.open(fits_file)
     data = hdul[0].data
     hdul.close()
@@ -81,14 +80,30 @@ def display_fits(fits):
 
 
 def filter(data):
-    for a in range(len(data)):
-        for b in range(len(data[a])):
-            if np.isnan(data[a, b]):
-                data[a, b] = 255
+    done = False
+    while done == False:
+        done = True
+        for a in range(len(data)):
+            for b in range(len(data[a])):
+                    total = 0
+                    count = 0
+                    if np.isnan(data[a, b]):
+                        for c in range(-1, 1):
+                            for d in range(-1, 1):
+                                if not np.isnan(data[a + c, b + c]):
+                                    total = total + data[a + c, b + c]
+                                    count = count + 1
+                        try:
+                            data[a, b] = total/count
+                        except:
+                            done = False
+                            print(data[a, b])
     return data
 
-#OBJECT = 'Ceres'
-OBJECT = 'Gletorrence'
+
+
+OBJECT = 'Ceres'
+#OBJECT = 'Gletorrence'
 URL = 'https://irsa.ipac.caltech.edu/'
 catnames = ['neowiser_p1bs_psd', 'neowiser_p1ba_mch', 'neowiser_p1bs_frm', 'neowiser_p1bl_lod']
 catalogName = 'neowiser_p1bs_psd'
@@ -106,6 +121,7 @@ scan_id, frame_num, band = find_image(coordinateMetadata, utc)
 params = find_image(coordinateMetadata, utc)
 
 image = download_image(OBJECT, params)
+print(image)
 
 w = wcs.WCS(image)
 x, y = w.wcs_world2pix(asteroidMetadata.ra[element], asteroidMetadata.dec[element], 0)
@@ -114,7 +130,8 @@ X = display_fits(image)
 
 X = filter(X)
 
-
+plt.imshow(np.log(np.abs(X)))
+plt.show()
 
 fx = dip.fftshift(dip.fft2(X))
 radius = 30
@@ -125,8 +142,8 @@ for a in range(len(f)):
     for b in range(len(f[a])):
         if np.square(center - a) + np.square(center - b) < np.square(radius):
             f[a, b] = 0
-plt.imshow(np.log10(x))
-plt.show()
+
+
 
 plt.imshow(np.log(np.abs(dip.ifft2(fx))))
 plt.show()
