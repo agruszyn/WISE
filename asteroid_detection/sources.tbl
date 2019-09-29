@@ -2,8 +2,8 @@
 \fixlen = T
 \RowsRetrieved =               120
 \ORIGIN  = 'IPAC Infrared Science Archive (IRSA), Caltech/JPL'
-\DATETIME= '2019-09-29 10:28:23'
-\DataTag = 'ADS/IRSA.Gator#2019/0929/102823_22597'
+\DATETIME= '2019-09-29 12:02:39'
+\DataTag = 'ADS/IRSA.Gator#2019/0929/120239_8614'
 \DATABASE= 'NEOWISE-R Single Exposure (L1b) Source Table (neowiser_p1bs_psd)'
 \EQUINOX = 'J2000'
 \NOTE    = 'Column names with suffix _u are from the moving object seed list file .'
@@ -11,7 +11,7 @@
 \NOTE    = 'dist_x is the distance in arcsec between each moving object source and its potential match in the NEOWISE-R Single Exposure (L1b) Source Table.'
 \NOTE    = 'pang_x is position angle, measured eastward from north, between the moving object and potential match in the NEOWISE-R Single Exposure (L1b) Source Table. 
 \NOTE    = 'Output rows are ordered by increasing cntr_u, and for each cntr_u by increasing dist_x.'
-\StatusFile = '/workspace/TMP_3jSSaF_22597/Gator/irsa/22597/log.22597.html'
+\StatusFile = '/workspace/TMP_X6pJNc_8614/Gator/irsa/8614/log.8614.html'
 \SQL     = 'WHERE  A.cntr_u = X.cntr1_x and B.cntr=X.cntr2_x and A.scan_id_u=B.scan_id and A.frame_num_u=B.frame_num '
 \SQL     = 'SELECT (35 column names follow in next row.)'
 \ 

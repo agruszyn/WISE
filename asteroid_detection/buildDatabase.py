@@ -38,8 +38,8 @@ def find_image(catalog, date):
     for i in range(len(catalog.date_obs)):
         if date in catalog.date_obs[i]:
             return {'scan_id': str(catalog.scan_id[i]),
-                    'frame_num': catalog.frame_num[i],
-                    'band': catalog.band[i],
+                    'frame_num': str(catalog.frame_num[i]),
+                    'band': str(catalog.band[i]),
                     }
 
 
@@ -63,22 +63,27 @@ asteroidMetadata = get_asteroid_sources(catalogName, OBJECT, filecontent)
 ceres = []
 dictionary = {}
 
-for i in range(len(asteroidMetadata)):
+#for i in range(len(asteroidMetadata)):
+for i in range(5):
     newfile = open('positionTable.tbl', 'wb')
     utc = (get_datetime(asteroidMetadata, i))
     params = get_positional_images(asteroidMetadata, i, utc, newfile)
     if params is not None:
-        key = params['scan_id'] + str(params['frame_num']) + str(params['band'])
+        key = params['scan_id'] + params['frame_num'] + params['band']
         if key not in dictionary:
             dictionary[key] = {}
         dictionary[key]['params'] = params
         if 'asteroids' not in dictionary[key]:
             dictionary[key]['asteroids'] = []
         asteroid = {}
-        asteroid['ra'] = asteroidMetadata.ra[i]
-        asteroid['dec'] = asteroidMetadata.dec[i]
+        asteroid['ra'] = str(asteroidMetadata.ra[i])
+        asteroid['dec'] = str(asteroidMetadata.dec[i])
         asteroid['name'] = OBJECT
         asteroid['date'] = utc
-        dictionary[key]['asteroid'].append(asteroid)
+        dictionary[key]['asteroids'].append(asteroid)
         print('scans left: ', len(asteroidMetadata) - i)
         time.sleep(5)
+
+file = open('mylist.json', 'w')
+json.dump(dictionary, file)
+file.close()
